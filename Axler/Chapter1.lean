@@ -8,11 +8,6 @@ import Axler.Chapter1.Rn
 
 # Chapter 1
 
-## Overview
-
-This is a formalization of Axler, Linear Algebra Done Right, in Lean4 with Mathlib4,
-using the 4th edition, freely available at https://linear.axler.net/
-
 -/
 
 /-
