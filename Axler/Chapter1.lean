@@ -1,5 +1,6 @@
 import Mathlib.Tactic
 import Mathlib.Algebra.NeZero
+import Mathlib.Logic.IsEmpty
 import Axler.Chapter1.MyComplex
 import Axler.Chapter1.Complex
 import Axler.Chapter1.Rn
@@ -188,3 +189,5 @@ example {v w: V} {a: F}: a ≠ 0 → ∃x, v + a•x = w := fun h =>
 The empty set is not a vector space. The empty set fails to satisfy only one of the requirements
 listed in the definition of a vector space (1.20). Which one?
 -/
+
+example: ¬IsEmpty V := not_isEmpty_of_nonempty V
