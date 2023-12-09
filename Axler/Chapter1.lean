@@ -188,6 +188,8 @@ example {v w: V} {a: F}: a ≠ 0 → ∃x, v + a•x = w := fun h =>
 
 The empty set is not a vector space. The empty set fails to satisfy only one of the requirements
 listed in the definition of a vector space (1.20). Which one?
+
+In Mathlib, it's easier to do this backwards and prove that an arbitrary vector space is not empty
 -/
 
 example: ¬IsEmpty V := not_isEmpty_of_nonempty V
