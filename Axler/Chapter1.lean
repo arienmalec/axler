@@ -177,6 +177,7 @@ example {v w: V}: ∃x, v + (3: F )•x = w := by
   rw [smul_smul, mul_inv_cancel, one_smul, add_comm, sub_add_cancel]
   exact three_ne_zero
 
+-- a more general proof
 example {v w: V} {a: F}: a ≠ 0 → ∃x, v + a•x = w := fun h =>
   ⟨a⁻¹ • (w - v), by
     rw [smul_smul, mul_inv_cancel, one_smul, add_comm, sub_add_cancel]; assumption⟩
