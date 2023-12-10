@@ -195,3 +195,17 @@ This is witnessed through the `zero` element of the vector space via `Zero.nonem
 -/
 
 example: ¬IsEmpty V := not_isEmpty_of_nonempty V
+
+
+/-
+### Exercise 5
+
+Show that in the definition of a vector space (1.20), the additive inverse condition can be replaced with the condition that
+0𝑣 = 0 for all 𝑣 ∈ 𝑉.
+Here the 0 on the left side is the number 0, and the 0 on the right side is the
+additive identity of 𝑉.
+-/
+
+example: ∀(v: V), (0: F)•v = 0 → ∃w, v + w = 0 := fun v h => by
+  use ((-1: F) • v)
+  rw [←one_smul F v, smul_comm, one_smul F ((-1: F) • v), ←add_smul, add_right_neg, h]
