@@ -204,6 +204,8 @@ Show that in the definition of a vector space (1.20), the additive inverse condi
 0𝑣 = 0 for all 𝑣 ∈ 𝑉.
 Here the 0 on the left side is the number 0, and the 0 on the right side is the
 additive identity of 𝑉.
+
+Here we want to show that `v - v = 1•v + -1• v = (1 + -1) • v = 0 • v` so we can use our updated axiom
 -/
 
 example: ∀(v: V), (0: F)•v = 0 → ∃w, v + w = 0 := fun v h => by
