@@ -274,3 +274,15 @@ lemma EReal.one_mul_add_ne_one_add_mul: 1*⊥ + (-1: EReal )*⊥ ≠ ((1: EReal)
 theorem not_all_add_mul: ¬∀ (x y z: EReal), x * z + y * z = (x + y) * z := fun h =>
   let h2  :=  EReal.one_mul_add_ne_one_add_mul
   h2 (h 1 (-1: EReal) ⊥)
+
+/-
+### Exercise 7
+
+Suppose 𝑆 is a nonempty set. Let 𝑉𝑆 denote the set of functions from 𝑆 to 𝑉.
+Define a natural addition and scalar multiplication on 𝑉𝑆, and show that 𝑉𝑆 is a vector space with these definitions.
+
+We can perform the addition pointwise, since the underlying vectors add properly, and use the field
+over which the vector space is defined for scalar multiplication, and again this is automagic in Mathlib
+-/
+
+#synth Module F (α → V)
