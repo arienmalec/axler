@@ -1,6 +1,7 @@
 import Mathlib.Tactic
 import Mathlib.Algebra.NeZero
 import Mathlib.Logic.IsEmpty
+import Mathlib.Data.Real.EReal
 import Axler.Chapter1.MyComplex
 import Axler.Chapter1.Complex
 import Axler.Chapter1.Rn
@@ -211,3 +212,65 @@ Here we want to show that `v - v = 1•v + -1• v = (1 + -1) • v = 0 • v` s
 example: ∀(v: V), (0: F)•v = 0 → ∃w, v + w = 0 := fun v h => by
   use ((-1: F) • v)
   rw [←one_smul F v, smul_comm, one_smul F ((-1: F) • v), ←add_smul, add_right_neg, h]
+
+/-
+### Exercise 6
+
+Let ∞ and −∞ denote two distinct objects, neither of which is in 𝐑.
+Define an addition and scalar multiplication on 𝐑 ∪ {∞, −∞} as you could guess from the notation. Specifically, the sum and product of two real numbers is as usual, and for 𝑡 ∈ 𝐑 define
+𝑡*∞ =
+* t < 0: −∞
+* t = 0: 0
+* t > 0: ∞
+
+𝑡*-∞ =
+* t < 0: ∞
+* t = 0: 0
+* t > 0: -∞
+
+𝑡 + ∞ = ∞ + 𝑡 = ∞ + ∞ = ∞,
+𝑡+(−∞) = (−∞)+𝑡 = (−∞)+(−∞) = −∞,
+∞+(−∞) = (−∞)+∞ = 0.
+
+With these operations of addition and scalar multiplication, is 𝐑 ∪ {∞, −∞}
+a vector space over 𝐑? Explain.
+
+First, we note that the defition proposed is exactly that of the `Mathlib.Data.Real.EReal`
+implementation of extended reals.
+
+We also note there's no automagic here:
+--#synth Module EReal EReal
+-- Errors "failed to synthesize instance Semiring EReal"
+
+The issue is that multiplcation does not commute, so we can't get a defintion
+of multiplcation by either `ℝ` or `EReal` that follows the laws.
+
+We want to get a proof that commutation is violated: `¬∀ (x y z: EReal), x * z + y * z = (x + y) * z`
+-/
+
+
+-- `1*⊥ + -1*⊥ = ⊥`
+lemma EReal.one_mul_add:  1*⊥ + (-1: EReal )*⊥ = (⊥: EReal) := by
+  have h: (⊥: EReal) = ⊥ + ⊤ := rfl
+  have h2: (⊥: EReal) + ⊤ = (1: EReal) *⊥ + (-1: EReal)*⊥ := by
+    have h3 : (⊥ : EReal) = 1*⊥ := Linarith.without_one_mul rfl
+    have h4: (⊤: EReal) = -⊥ := rfl
+    have h5: (-⊥ : EReal) = -1 * ⊥ := neg_eq_neg_one_mul ⊥
+    rw [h3, h4, h5]
+    simp
+  rw [h, h2]
+  simp
+
+-- but `(1 + -1)*⊥ = 0`
+lemma EReal.one_add_mul: ((1: EReal) + (-1: EReal))*⊥ = 0 := by
+  have h: (1: EReal) + -1 = 1 - 1 := rfl
+  have h2: (1: EReal) - 1 = 0 := by rw [←EReal.coe_one, ←EReal.coe_sub, sub_self, EReal.coe_zero]
+  rw [h, h2, zero_mul]
+
+lemma EReal.one_mul_add_ne_one_add_mul: 1*⊥ + (-1: EReal )*⊥ ≠ ((1: EReal) + -1)*⊥ :=  by
+  rw [EReal.one_mul_add, EReal.one_add_mul]
+  exact bot_ne_zero
+
+theorem not_all_add_mul: ¬∀ (x y z: EReal), x * z + y * z = (x + y) * z := fun h =>
+  let h2  :=  EReal.one_mul_add_ne_one_add_mul
+  h2 (h 1 (-1: EReal) ⊥)
