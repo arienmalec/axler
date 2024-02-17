@@ -61,7 +61,7 @@ theorem normSq_eq_zero_iff {x: MyComplex}: x = 0 ↔ (x.re^2 + x.im^2) = 0 := by
   constructor <;> intro h
   . simp only [MyComplex.ext_iff, zero_re, zero_im] at h
     rw [h.left, h.right]
-    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow', add_zero]
+    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero]
   . have h2: x.re^2 ≥ 0 := sq_nonneg x.re
     have h3: x.im^2 ≥ 0 := sq_nonneg x.im
     have h4: x.re^2 = 0 ∧ x.im^2 = 0 := (add_eq_zero_iff' h2 h3).mp h

@@ -2,9 +2,13 @@ import Mathlib.Tactic
 import Mathlib.Algebra.NeZero
 import Mathlib.Logic.IsEmpty
 import Mathlib.Data.Real.EReal
+import Mathlib.LinearAlgebra.TensorProduct
+import Mathlib.LinearAlgebra.TensorProduct.Prod
+import Mathlib.Algebra.Module.Equiv
 import Axler.Chapter1.MyComplex
 import Axler.Chapter1.Complex
 import Axler.Chapter1.Rn
+import Axler.Chapter1.Vc
 
 /-!
 
@@ -279,10 +283,50 @@ theorem not_all_add_mul: ¬∀ (x y z: EReal), x * z + y * z = (x + y) * z := fu
 ### Exercise 7
 
 Suppose 𝑆 is a nonempty set. Let 𝑉𝑆 denote the set of functions from 𝑆 to 𝑉.
-Define a natural addition and scalar multiplication on 𝑉𝑆, and show that 𝑉𝑆 is a vector space with these definitions.
+Define a natural addition and scalar multiplication on `𝑉_𝑆`, and show that `𝑉_𝑆` is a vector space with these definitions.
 
 We can perform the addition pointwise, since the underlying vectors add properly, and use the field
 over which the vector space is defined for scalar multiplication, and again this is automagic in Mathlib
 -/
 
 #synth Module F (α → V)
+
+
+/-
+### Exercise 8
+
+Suppose 𝑉 is a real vector space.
+* The complexification of `𝑉`, denoted by `𝑉^𝐂` , equals `𝑉 × 𝑉`. An element of
+`𝑉^𝐂` is an ordered pair `(𝑢,𝑣)`,where `𝑢,𝑣 ∈ 𝑉`,but we write this as `𝑢 + 𝑖𝑣`
+* Addition on `𝑉^𝐂` is defined by
+```∀ 𝑢_1,𝑣_1,𝑢_2,𝑣_2 ∈ 𝑉, (𝑢_1 +𝑖𝑣_1) + (𝑢_2 +𝑖𝑣_2) = (𝑢_1 +𝑢_2) + 𝑖(𝑣_1 +𝑣_2) ```.
+* Complex scalar multiplication on `𝑉^𝐂` is defined by `(𝑎 + 𝑏𝑖)(𝑢 + 𝑖𝑣) = (𝑎𝑢 − 𝑏𝑣) + 𝑖(𝑎𝑣 + 𝑏𝑢)`
+for all `𝑎, 𝑏 ∈ 𝐑` and all `𝑢, 𝑣 ∈ 𝑉`.
+
+Prove that with the definitions of addition and scalar multiplication as above,
+`𝑉^𝐂` is a complex vector space.
+Think of 𝑉 as a subset of `𝑉^𝐂` by identifying `𝑢 ∈ 𝑉` with `𝑢 + 𝑖0`. The construction of `𝑉^𝐂` from `𝑉`
+can then be thought of as generalizing the construction of `ℂ^𝑛` from `ℝ^𝑛`.
+
+We do this two different ways. The first, in keeping with the level of proof tools we have in LADR right now,
+takes the construction of `V^C` literally, and shows that as defined, `V^C` is a vector space with scalar multiplication
+by `ℂ`.
+
+This basic appraoch is in `Axler.Chapter1.Vc`
+
+The second approach uses more of the power of `Mathlib` but requires more mathmatics than is presented in LADR.
+
+Here, we treat the complexification of a real vector space as the tensor product of the vector space with `ℂ`. Again,
+proof this is a complex vector space is built in to `Mathlib`.
+
+We'd then like to show that we aren't cheating by showing that the tensor product is, indeed, equivalent
+to the product of our vector space.
+-/
+
+variable {V} [AddCommGroup V] [Module ℝ V]
+
+open scoped TensorProduct
+
+#synth Module ℂ (ℂ ⊗[ℝ] V)
+
+theorem prodEquivComplexTensor: V × V ≃ ℂ ⊗[ℝ] V := by sorry
