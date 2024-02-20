@@ -114,7 +114,7 @@ In Lean4 and Mathlib, types are more general than `Set`, so we can prove this ov
 a Mathlib `Set` proper.
 -/
 
-variable {α : Type _}
+variable {α : Type*}
 #synth Module F (α → F)
 #synth Module F (Set α → F)
 
@@ -314,7 +314,8 @@ by `ℂ`.
 
 This basic appraoch is in `Axler.Chapter1.Vc`
 
-The second approach uses more of the power of `Mathlib` but requires more mathmatics than is presented in LADR.
+The second approach uses more of the power of `Mathlib` but requires more mathmatics than is currently presented in LADR.
+(It uses linear maps, which are the subject of Chapter 3, and tensor products, which are in 9A)
 
 Here, we treat the complexification of a real vector space as the tensor product of the vector space with `ℂ`. Again,
 proof this is a complex vector space is built in to `Mathlib`.
@@ -323,10 +324,34 @@ We'd then like to show that we aren't cheating by showing that the tensor produc
 to the product of our vector space.
 -/
 
-variable {V} [AddCommGroup V] [Module ℝ V]
+variable (V) [AddCommGroup V] [Module ℝ V]
 
 open scoped TensorProduct
 
 #synth Module ℂ (ℂ ⊗[ℝ] V)
 
-theorem prodEquivComplexTensor: V × V ≃ ℂ ⊗[ℝ] V := by sorry
+noncomputable def toFun: V × V →ₗ[ℝ] ℂ ⊗[ℝ] V where
+  toFun p := match p with
+  |  ⟨fst, snd⟩ => ((1: ℂ) ⊗ₜ[ℝ] fst) + Complex.I ⊗ₜ[ℝ] snd
+  map_add' p1 p2 := by dsimp; simp [TensorProduct.tmul_add]; abel_nf
+  map_smul' r p := by dsimp; simp [TensorProduct.tmul_smul]
+
+noncomputable def invFun: ℂ ⊗[ℝ] V →ₗ[ℝ] V × V :=
+  TensorProduct.lift <| LinearMap.mk₂
+  ℝ (fun z v ↦ (z.re • v, z.im • v))
+    (by intros; ext <;> dsimp <;> rw [add_smul])
+    (by intros; ext <;> dsimp <;> simp [mul_smul])
+    (by intros; ext <;> dsimp <;> simp [smul_add])
+    (by intros; ext <;> dsimp <;> rw [smul_comm])
+
+attribute [ext] TensorProduct.ext'
+theorem toFun_invFun_comp_eq_id: LinearMap.comp (@toFun V _ _) (@invFun V _ _) = LinearMap.id := by
+  simp only [toFun, invFun]; ext z v; dsimp; simp [TensorProduct.tmul_add, TensorProduct.smul_tmul]
+  rw [TensorProduct.smul_tmul', TensorProduct.smul_tmul', ←TensorProduct.add_tmul (z.re • 1) (z.im • Complex.I) v]
+  simp only [Complex.real_smul, mul_one, Complex.re_add_im]
+
+theorem invFun_toFun_comp_eq_id: LinearMap.comp (@invFun V _ _) (@toFun V _ _) = LinearMap.id := by
+  simp only [toFun, invFun]; apply LinearMap.ext; intro p; simp
+
+noncomputable def prodRLinearComplexTensor: (V × V) ≃ₗ[ℝ] (ℂ ⊗[ℝ] V) :=
+  LinearEquiv.ofLinear (@toFun V _ _) (@invFun V _ _) (@toFun_invFun_comp_eq_id V _ _) (@invFun_toFun_comp_eq_id V _ _)
