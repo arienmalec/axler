@@ -321,7 +321,10 @@ Here, we treat the complexification of a real vector space as the tensor product
 proof this is a complex vector space is built in to `Mathlib`.
 
 We'd then like to show that we aren't cheating by showing that the tensor product is, indeed, equivalent
-to the product of our vector space.
+to the product of our vector space. To show equivalence of two types in `Mathlib` in general we need to make an
+`Equiv` that provides functions that map each way (to and from), then show that the maps are inverses of one another.
+Here we prove a stronger equivalence,`LinearEquiv`, which adds an additional constraint that addition and
+scalar multiplication are preserved across the equivalence.
 -/
 
 variable (V) [AddCommGroup V] [Module ℝ V]
@@ -330,12 +333,18 @@ open scoped TensorProduct
 
 #synth Module ℂ (ℂ ⊗[ℝ] V)
 
+/--
+Trivial linear map betwen `V × V` and `ℂ ⊗[ℝ] V` that treats the first part as real and the second as imaginary
+-/
 noncomputable def toFun: V × V →ₗ[ℝ] ℂ ⊗[ℝ] V where
   toFun p := match p with
   |  ⟨fst, snd⟩ => ((1: ℂ) ⊗ₜ[ℝ] fst) + Complex.I ⊗ₜ[ℝ] snd
   map_add' p1 p2 := by dsimp; simp [TensorProduct.tmul_add]; abel_nf
   map_smul' r p := by dsimp; simp [TensorProduct.tmul_smul]
 
+/--
+Trivial inverted map, that contructs a `Prod` by scaling a vector by the real and imaginary parts of a complex number
+-/
 noncomputable def invFun: ℂ ⊗[ℝ] V →ₗ[ℝ] V × V :=
   TensorProduct.lift <| LinearMap.mk₂
   ℝ (fun z v ↦ (z.re • v, z.im • v))
@@ -344,7 +353,6 @@ noncomputable def invFun: ℂ ⊗[ℝ] V →ₗ[ℝ] V × V :=
     (by intros; ext <;> dsimp <;> simp [smul_add])
     (by intros; ext <;> dsimp <;> rw [smul_comm])
 
-attribute [ext] TensorProduct.ext'
 theorem toFun_invFun_comp_eq_id: LinearMap.comp (@toFun V _ _) (@invFun V _ _) = LinearMap.id := by
   simp only [toFun, invFun]; ext z v; dsimp; simp [TensorProduct.tmul_add, TensorProduct.smul_tmul]
   rw [TensorProduct.smul_tmul', TensorProduct.smul_tmul', ←TensorProduct.add_tmul (z.re • 1) (z.im • Complex.I) v]
@@ -353,5 +361,8 @@ theorem toFun_invFun_comp_eq_id: LinearMap.comp (@toFun V _ _) (@invFun V _ _) =
 theorem invFun_toFun_comp_eq_id: LinearMap.comp (@invFun V _ _) (@toFun V _ _) = LinearMap.id := by
   simp only [toFun, invFun]; apply LinearMap.ext; intro p; simp
 
+/--
+Our proof of equivalence
+-/
 noncomputable def prodRLinearComplexTensor: (V × V) ≃ₗ[ℝ] (ℂ ⊗[ℝ] V) :=
   LinearEquiv.ofLinear (@toFun V _ _) (@invFun V _ _) (@toFun_invFun_comp_eq_id V _ _) (@invFun_toFun_comp_eq_id V _ _)
