@@ -12,7 +12,9 @@ itself is just a structure anyway).
 -/
 @[ext]
 structure Vc where
+  /-- First element, seen as a real part-/
   r: V
+  /-- Second element, seen as imaginary -/
   i: V
 
 namespace Vc
