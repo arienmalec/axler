@@ -132,7 +132,7 @@ nonrec theorem add_smul: ∀ (x y : ℂ) (w : Vc V), (x + y) • w = x • w + y
   . rw [smul_r, Complex.add_re, add_smul, Complex.add_im, add_r, add_smul, smul_r, smul_r]; abel_nf
   . rw [smul_i, Complex.add_re, add_smul, Complex.add_im, add_i, add_smul, smul_i, smul_i]; abel_nf
 
-instance VcModule: Module ℂ (Vc V) where
+instance vcModule: Module ℂ (Vc V) where
   smul a w := complex_smul _ a w
   one_smul w := @one_smul _ _ _ w
   zero_smul w := @zero_smul _ _ _ w
