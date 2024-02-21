@@ -41,14 +41,14 @@ variable (x y z: ℝ)
 #check ![x, y, z]
 /-
 
-In Mathlib, the laws for vector addition are encapsulated in `AddCommMonoid`, and we get a built-in
+In Mathlib, the laws for vector addition are encapsulated in `AddCommGroup`, and we get a built-in
 lawful implementation of vector addition in Mathlib via definitions in the `Pi` namespace (`Pi` here
 refers to Π-types, or the types of dependent functions, of which `Fin 3 → ℝ` is an instance). Again,
 it can be instructive to build an implementation of these definitions and prove that they implement the
-laws for `AddCommMonoid`, which is done in `Axler.Chapter1.Rn`. Again, though, we get the automagic
+laws for `AddCommGroup`, which is done in `Axler.Chapter1.Rn`. Again, though, we get the automagic
 version for free:
 -/
-#synth (n: ℕ) → AddCommMonoid (Fin n → ℝ)
+#synth (n: ℕ) → AddCommGroup (Fin n → ℝ)
 
 /-
 We can extend these defintions and proofs to all fields via a bit more work in `Axler.Chapter1.Fn`. Again, we
@@ -56,7 +56,7 @@ need not do this manually, because this is built-in via Mathlib:
 -/
 variable {F: Type _}
 variable [Field F]
-#synth (n: ℕ) -> AddCommMonoid (Fin n → F)
+#synth (n: ℕ) -> AddCommGroup (Fin n → F)
 
 /-
 ## Exercises 1A
