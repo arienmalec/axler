@@ -286,14 +286,14 @@ theorem not_all_add_mul: ¬∀ (x y z: EReal), x * z + y * z = (x + y) * z := fu
 /-
 ### Exercise 7
 
-Suppose 𝑆 is a nonempty set. Let 𝑉𝑆 denote the set of functions from 𝑆 to 𝑉.
+Suppose `𝑆` is a nonempty set. Let `𝑉_𝑆` denote the set of functions from `𝑆` to `𝑉`.
 Define a natural addition and scalar multiplication on `𝑉_𝑆`, and show that `𝑉_𝑆` is a vector space with these definitions.
 
 We can perform the addition pointwise, since the underlying vectors add properly, and use the field
-over which the vector space is defined for scalar multiplication, and again this is automagic in Mathlib
+over which the vector space is defined for scalar multiplication, and again this is automagic in Mathlib.
 -/
 
-#synth Module F (α → V)
+#synth Module F (α → V) -- note again that types are more general than `Set` in Lean and `Mathlib`
 
 
 /-
