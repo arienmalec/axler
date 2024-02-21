@@ -119,13 +119,17 @@ variable {α : Type*}
 #synth Module F (Set α → F)
 
 /-
-### 1.26 uniqueness of the additive identity
-
 From now on we are generally going to be dealing with arbitrary vectors that conform to the
-`AddCommGroup` axioms that form a vector space over field `F`: `Module F V`
+`AddCommGroup` axioms that form a vector space over field `F`: `Module F V` so we set up our
+variables accordingly.
 -/
 
 variable [Field F] [AddCommGroup V] [Module F V]
+
+/-
+### 1.26 uniqueness of the additive identity
+-/
+
 
 example {a b: V}: a + b = a ↔ b = 0 := add_right_eq_self
 
@@ -215,7 +219,7 @@ Here we want to show that `v - v = 1•v + -1• v = (1 + -1) • v = 0 • v` s
 
 example: ∀(v: V), (0: F)•v = 0 → ∃w, v + w = 0 := fun v h => by
   use ((-1: F) • v)
-  rw [←one_smul F v, smul_comm, one_smul F ((-1: F) • v), ←add_smul, add_right_neg, h]
+  rw [←one_smul F v, smul_comm, one_smul F ((-1: F) • v), ←add_smul, add_right_neg]; assumption
 
 /-
 ### Exercise 6
