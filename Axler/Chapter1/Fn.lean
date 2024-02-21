@@ -28,12 +28,20 @@ instance zeroRn: Zero (Fn F n) where
 @[simp]
 theorem zero_term: (0 :Fn F n).term x = 0 := rfl
 
-instance addCommMonoidRn: AddCommMonoid (Fn F n) where
+instance negRn: Neg (Fn F n) where
+  neg r := ⟨fun n => -(r.term n)⟩
+
+@[simp]
+theorem neg_term {a: Fn F n}: (-a).term = -(a.term) := rfl
+
+
+instance addCommGroupRn: AddCommGroup (Fn F n) where
   add_comm a b := by  ext ; simp [add_comm]
   add_assoc a b c := by ext ; simp [add_assoc]
   zero := zeroRn.zero
   add_zero a := by ext ; simp only [term_add_apply, add_zero, zero_term]
   zero_add a := by ext ; simp only [term_add_apply, zero_add, zero_term]
+  add_left_neg a := by ext; simp
 
 instance moduleRn: Module F (Fn F n) where
   one_smul a := by ext; simp
