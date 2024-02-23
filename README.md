@@ -13,6 +13,6 @@ Very much a work in progress. Collaboration welcome at the [Zulip](https://leanp
 
 Chapter 1 of Linear Algebra Done Right in Lean 4 has been done a few times before
 
-Martin C Martin did the chapter content (not the exercises) https://github.com/martincmartin/linear_algebra_done_right/
+Martin C Martin did the chapter content (not the exercises) <https://github.com/martincmartin/linear_algebra_done_right/>
 
-Tyler Hanks did a re-implementation (no Mathlib): https://github.com/tylerhanks/leanear-algebra
+Tyler Hanks did a re-implementation (no Mathlib): <https://github.com/tylerhanks/leanear-algebra>
