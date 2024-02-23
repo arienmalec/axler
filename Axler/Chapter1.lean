@@ -5,6 +5,10 @@ import Mathlib.Data.Real.EReal
 import Mathlib.LinearAlgebra.TensorProduct
 import Mathlib.LinearAlgebra.TensorProduct.Prod
 import Mathlib.Algebra.Module.Equiv
+import Mathlib.Topology.Defs.Basic
+import Mathlib.Topology.Basic
+import Mathlib.Topology.Algebra.Monoid
+import Mathlib.Data.Set.Intervals.Basic
 import Axler.Chapter1.MyComplex
 import Axler.Chapter1.Complex
 import Axler.Chapter1.Rn
@@ -392,7 +396,7 @@ theorem ex_1 : (b: F) → 0 ∈ {f: Fin 4 → F | 5*(f 2) = (f 4) + b} ↔ b = 0
   intro b; simp only [Set.mem_setOf_eq, Pi.zero_apply, mul_zero, zero_add]
   constructor <;> intro h <;> exact h.symm
 
-def ex1_Submodule: Submodule F (Fin 4 → F) where
+def ex1_Subspoace: Submodule F (Fin 4 → F) where
   carrier := {f: Fin 4 → F | 5*(f 2) = (f 4)}
   zero_mem' := by simp only [Set.mem_setOf_eq, Pi.zero_apply, mul_zero]
   add_mem' := by simp only [Set.mem_setOf_eq, Pi.add_apply]; intro a b h1 h2; rw [mul_add, h1, h2]
@@ -401,3 +405,31 @@ def ex1_Submodule: Submodule F (Fin 4 → F) where
     intro c f h1
     have h2: 5 * (c * f 2) = c * (5 * f 2) := by ring_nf
     rw [h2, h1]
+
+/-
+1.35 example (2)
+
+The set of continuous real-valued functions on the interval `[0,1]` is a subspace
+of `𝐑^{[0,1]}`
+
+(mostly taken from https://github.com/martincmartin/linear_algebra_done_right/)
+-/
+
+def ex2_Subspace: Submodule ℝ ( Set.Icc (0 : ℝ) (1 : ℝ) → ℝ) where
+  carrier := {f | Continuous f}
+  zero_mem' := by simp only [Set.mem_setOf_eq]; exact continuous_zero
+  add_mem' := by simp only [Set.mem_setOf_eq]; intro a b h1 h2; exact h1.add h2
+  smul_mem' := by simp only [Set.mem_setOf_eq]; intro a f h; exact continuous_const.mul h
+
+/-
+1.35 example (3)
+
+The set of differentiable real-valued functions on `ℝ` is a subspace of `ℝ^ℝ`
+(mostly taken from https://github.com/martincmartin/linear_algebra_done_right/)
+-/
+
+def ex3_Subspace: Submodule ℝ (ℝ → ℝ ) where
+  carrier := {f | Differentiable ℝ f}
+  zero_mem' := differentiable_const _
+  add_mem' :=  Differentiable.add
+  smul_mem' c _ := (differentiable_const c).smul
