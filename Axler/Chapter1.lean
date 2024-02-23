@@ -368,5 +368,36 @@ theorem invFun_toFun_comp_eq_id: LinearMap.comp (@invFun V _ _) (@toFun V _ _) =
 /--
 Our proof of equivalence
 -/
-noncomputable def prodRLinearComplexTensor: (V × V) ≃ₗ[ℝ] (ℂ ⊗[ℝ] V) :=
+noncomputable def prod_rLinearEquiv_ComplexTensor: (V × V) ≃ₗ[ℝ] (ℂ ⊗[ℝ] V) :=
   LinearEquiv.ofLinear (@toFun V _ _) (@invFun V _ _) (@toFun_invFun_comp_eq_id V _ _) (@invFun_toFun_comp_eq_id V _ _)
+
+/-
+## 1C: Subspaces
+
+
+We have `variable (V) [AddCommGroup V] [Module 𝔽 V]` as the `Mathlib` declaration for a vector space over `𝔽`
+
+A subspace is a restiction of `V` such that the subspace laws are preserved, which in `Mathlib` is expressed a `Set` over `V`
+plus the three laws, wrapped up in a `Submodule` definition -/
+
+/-
+1.35 example (1):
+If `𝑏 ∈ 𝔽`, then `{(𝑥_1,𝑥_2,𝑥_3,𝑥_4) ∈ 𝔽^4 ∶ 𝑥_3 = 5*𝑥_4 + 𝑏}` is a subspace of 𝐅^4 if and only if `𝑏 = 0`
+
+We first show that `0 ∈ {(𝑥_1,𝑥_2,𝑥_3,𝑥_4) ∈ 𝔽^4 ∶ 𝑥_3 = 5*𝑥_4 + 𝑏}` if and only if `b = 0`, then, setting
+`b = 0`, that the resulting `Set` is a `Submodule`
+-/
+
+theorem ex_1 : (b: F) → 0 ∈ {f: Fin 4 → F | 5*(f 2) = (f 4) + b} ↔ b = 0 := by
+  intro b; simp only [Set.mem_setOf_eq, Pi.zero_apply, mul_zero, zero_add]
+  constructor <;> intro h <;> exact h.symm
+
+def ex1_Submodule: Submodule F (Fin 4 → F) where
+  carrier := {f: Fin 4 → F | 5*(f 2) = (f 4)}
+  zero_mem' := by simp only [Set.mem_setOf_eq, Pi.zero_apply, mul_zero]
+  add_mem' := by simp only [Set.mem_setOf_eq, Pi.add_apply]; intro a b h1 h2; rw [mul_add, h1, h2]
+  smul_mem' := by
+    simp only [Set.mem_setOf_eq, Pi.smul_apply, smul_eq_mul]
+    intro c f h1
+    have h2: 5 * (c * f 2) = c * (5 * f 2) := by ring_nf
+    rw [h2, h1]
