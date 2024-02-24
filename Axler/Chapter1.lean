@@ -385,14 +385,14 @@ A subspace is a restiction of `V` such that the subspace laws are preserved, whi
 plus the three laws, wrapped up in a `Submodule` definition -/
 
 /-
-1.35 example (1):
+### 1.35 example (1):
 If `𝑏 ∈ 𝔽`, then `{(𝑥_1,𝑥_2,𝑥_3,𝑥_4) ∈ 𝔽^4 ∶ 𝑥_3 = 5*𝑥_4 + 𝑏}` is a subspace of 𝐅^4 if and only if `𝑏 = 0`
 
 We first show that `0 ∈ {(𝑥_1,𝑥_2,𝑥_3,𝑥_4) ∈ 𝔽^4 ∶ 𝑥_3 = 5*𝑥_4 + 𝑏}` if and only if `b = 0`, then, setting
 `b = 0`, that the resulting `Set` is a `Submodule`
 -/
 
-theorem ex_1 : (b: F) → 0 ∈ {f: Fin 4 → F | 5*(f 2) = (f 4) + b} ↔ b = 0 := by
+theorem ex_1_iff_eq_zero : (b: F) → 0 ∈ {f: Fin 4 → F | 5*(f 2) = (f 4) + b} ↔ b = 0 := by
   intro b; simp only [Set.mem_setOf_eq, Pi.zero_apply, mul_zero, zero_add]
   constructor <;> intro h <;> exact h.symm
 
@@ -407,10 +407,12 @@ def ex1_Subspoace: Submodule F (Fin 4 → F) where
     rw [h2, h1]
 
 /-
-1.35 example (2)
+### 1.35 example (2)
 
 The set of continuous real-valued functions on the interval `[0,1]` is a subspace
 of `𝐑^{[0,1]}`
+
+This example, and the next two, require additional constructs from `Mathlib`
 
 (mostly taken from https://github.com/martincmartin/linear_algebra_done_right/)
 -/
@@ -422,7 +424,7 @@ def ex2_Subspace: Submodule ℝ ( Set.Icc (0 : ℝ) (1 : ℝ) → ℝ) where
   smul_mem' := by simp only [Set.mem_setOf_eq]; intro a f h; exact continuous_const.mul h
 
 /-
-1.35 example (3)
+### 1.35 example (3)
 
 The set of differentiable real-valued functions on `ℝ` is a subspace of `ℝ^ℝ`
 (mostly taken from https://github.com/martincmartin/linear_algebra_done_right/)
@@ -433,3 +435,25 @@ def ex3_Subspace: Submodule ℝ (ℝ → ℝ ) where
   zero_mem' := differentiable_const _
   add_mem' :=  Differentiable.add
   smul_mem' c _ := (differentiable_const c).smul
+
+/-
+### 1.35 example (4)
+
+The set of differentiable real-valued functions `𝑓` on the interval `(0, 3)` such that `𝑓′(2) = 𝑏` is a
+subspaceof `ℝ^{(0,3)}` if and only if `𝑏 = 0`.
+
+Just like ex 1 above, the issue here is with the existence of `0` -- our `0` function is the constant
+function that sends all values to `0`, which implies that `f'(x) = 0` for all `x`.
+-/
+
+theorem ex_4_iff_eq_zero : (b: ℝ) → 0 ∈ {f | (∀ x ∈ Set.Ioo (0 : ℝ)  (3: ℝ), DifferentiableAt ℝ f x) ∧ (HasDerivAt f (b: ℝ)  (2: ℝ))} ↔ b = 0 := by
+  intro b
+  constructor <;> intro h
+  . have h2:= hasDerivAt_const (2:ℝ) (0: ℝ)
+    rw [←@Pi.zero_def] at h2
+    exact HasDerivAt.unique h.right h2
+  . constructor
+    . intro _ _
+      exact differentiableAt_const 0
+    . rw [h]
+      apply hasDerivAtFilter_const
