@@ -444,9 +444,12 @@ subspaceof `ℝ^{(0,3)}` if and only if `𝑏 = 0`.
 
 Just like ex 1 above, the issue here is with the existence of `0` -- our `0` function is the constant
 function that sends all values to `0`, which implies that `f'(x) = 0` for all `x`.
+
+(portions borrowed from https://github.com/martincmartin/linear_algebra_done_right/)
+
 -/
 
-theorem ex_4_iff_eq_zero : (b: ℝ) → 0 ∈ {f | (∀ x ∈ Set.Ioo (0 : ℝ)  (3: ℝ), DifferentiableAt ℝ f x) ∧ (HasDerivAt f (b: ℝ)  (2: ℝ))} ↔ b = 0 := by
+theorem ex4_iff_eq_zero : (b: ℝ) → 0 ∈ {f | (∀ x ∈ Set.Ioo (0 : ℝ)  (3: ℝ), DifferentiableAt ℝ f x) ∧ (HasDerivAt f (b: ℝ)  (2: ℝ))} ↔ b = 0 := by
   intro b
   constructor <;> intro h
   . have h2:= hasDerivAt_const (2:ℝ) (0: ℝ)
@@ -457,3 +460,35 @@ theorem ex_4_iff_eq_zero : (b: ℝ) → 0 ∈ {f | (∀ x ∈ Set.Ioo (0 : ℝ) 
       exact differentiableAt_const 0
     . rw [h]
       apply hasDerivAtFilter_const
+
+def ex4_Subspace: Submodule ℝ (ℝ → ℝ) where
+  carrier := { f | (∀ x ∈ Set.Ioo (0 : ℝ)  (3: ℝ), DifferentiableAt ℝ f x) ∧ (HasDerivAt f 0 2)}
+  zero_mem' := by
+    constructor
+    . intro _ _
+      exact differentiableAt_const 0
+    . apply hasDerivAtFilter_const
+  add_mem' := by
+    intro a b h1 h2
+    constructor
+    . intro x h
+      rcases (h1.left x h) with ⟨ f'x, f_has ⟩
+      rcases (h2.left x h) with ⟨ g'x, g_has ⟩
+      use f'x + g'x
+      exact f_has.add g_has
+    . have h3:= h1.right.add h2.right
+      simp [@Pi.add_def] at *
+      assumption
+  smul_mem' := by
+    intro a f hf
+    cases' hf with hf1 hf2
+    constructor
+    . intro b h
+      have h2 := (hf1 b h).smul_const a
+      simp [@Pi.smul_def] at *
+      simp_rw [mul_comm a (f _)]
+      exact h2
+    . have h := hf2.smul_const a
+      simp [@Pi.smul_def] at *
+      simp_rw [mul_comm a (f _)]
+      exact h
