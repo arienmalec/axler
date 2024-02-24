@@ -492,3 +492,30 @@ def ex4_Subspace: Submodule ℝ (ℝ → ℝ) where
       simp [@Pi.smul_def] at *
       simp_rw [mul_comm a (f _)]
       exact h
+
+/-
+### 1.35 Example 5
+
+The set of all sequences of complex numbers with limit `0` is a subspace of `ℂ^{∞}`
+
+(mostly taken from https://github.com/martincmartin/linear_algebra_done_right/)
+
+-/
+
+open Filter Topology
+
+def ex5_Subspace : Subspace ℂ (ℕ → ℂ) where
+  carrier := {u | Tendsto u Filter.atTop (𝓝 0)}
+  add_mem' := by
+    simp
+    intro u v hu hv
+    have h := hu.add hv
+    simp [Pi.add_def] at *
+    assumption
+  zero_mem' := tendsto_const_nhds
+  smul_mem' := by
+    simp
+    intro c u hu
+    have := hu.const_mul c
+    simp [Pi.add_def] at *
+    assumption
