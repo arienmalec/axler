@@ -9,6 +9,8 @@ import Mathlib.Topology.Defs.Basic
 import Mathlib.Topology.Basic
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Data.Set.Intervals.Basic
+import Mathlib.Algebra.Module.Submodule.Pointwise
+import Mathlib.Data.Fin.VecNotation
 import Axler.Chapter1.MyComplex
 import Axler.Chapter1.Complex
 import Axler.Chapter1.Rn
@@ -519,3 +521,39 @@ def ex5_Subspace : Subspace ℂ (ℕ → ℂ) where
     have := hu.const_mul c
     simp [Pi.add_def] at *
     assumption
+
+/-
+### Sums of Subspaces
+-/
+
+/-
+#### Example 1.37
+
+Suppose `𝑈` is the set of all elements of `𝔽^3` whose second and third coordinates equal 0, and `𝑊` is the set of all elements of `𝐅^3` whose first and third coordinates equal 0:
+`𝑈={(𝑥,0,0) ∈ 𝐅^3 ∶𝑥 ∈ 𝐅}` and `𝑊={(0,𝑦,0) ∈ 𝐅^3 ∶𝑦 ∈ 𝐅}`.
+Then as you should verify.
+
+`𝑈+𝑊={(𝑥,𝑦,0) ∈ 𝐅^3 ∶𝑥,𝑦 ∈ 𝐅}`
+
+We first prove that `U` and `W` are subspaces, then that `U + W` have the form provided, then that `U + W` are vector spaces.
+
+-/
+
+open Pointwise
+
+def subspace_ex1_37_U: Submodule ℝ (Fin 3 → ℝ) where
+  carrier :=  { ![x₁, 0, 0] | (x₁: ℝ)}
+  zero_mem' := by simp
+  add_mem' := by aesop
+  smul_mem' := by simp
+
+def subsdpace_ex1_37_V: Submodule ℝ (Fin 3 → ℝ) where
+  carrier := { ![0, x₂, 0] |  (x₂ : ℝ)}
+  zero_mem' := by simp
+  smul_mem' := by simp
+  add_mem' := by aesop
+
+theorem ex1_37: { ![x₁, 0, 0] | (x₁: ℝ)} + { ![0, x₂, 0] |  (x₂ : ℝ)} = { ![x₁, x₂, 0] | (x₁: ℝ) (x₂: ℝ)} := by
+  ext x ; simp [Set.mem_add]
+
+#synth Module ℝ (subspace_ex1_37_U + subsdpace_ex1_37_V)
