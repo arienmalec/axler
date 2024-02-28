@@ -2,6 +2,7 @@ import Mathlib.Tactic
 import Mathlib.Algebra.NeZero
 import Mathlib.Logic.IsEmpty
 import Mathlib.Data.Real.EReal
+import Mathlib.Algebra.Field.Basic
 import Mathlib.LinearAlgebra.TensorProduct
 import Mathlib.LinearAlgebra.TensorProduct.Prod
 import Mathlib.Algebra.Module.Equiv
@@ -535,10 +536,9 @@ Then as you should verify.
 
 `𝑈+𝑊={(𝑥,𝑦,0) ∈ 𝐅^3 ∶𝑥,𝑦 ∈ 𝐅}`
 
-We first prove that `U` and `W` are subspaces, then that `U + W` have the form provided, then that `U + W` are vector spaces.
+We first prove that `U` and `W` are subspaces, then that `U + W` have the form provided, then that `U + W` are subspaces.
 
 -/
-
 open Pointwise
 
 def subspace_ex1_37_U: Submodule ℝ (Fin 3 → ℝ) where
@@ -556,4 +556,4 @@ def subsdpace_ex1_37_V: Submodule ℝ (Fin 3 → ℝ) where
 theorem ex1_37: { ![x₁, 0, 0] | (x₁: ℝ)} + { ![0, x₂, 0] |  (x₂ : ℝ)} = { ![x₁, x₂, 0] | (x₁: ℝ) (x₂: ℝ)} := by
   ext x ; simp [Set.mem_add]
 
-#synth Module ℝ (subspace_ex1_37_U + subsdpace_ex1_37_V)
+#check (subspace_ex1_37_U + subsdpace_ex1_37_V)
