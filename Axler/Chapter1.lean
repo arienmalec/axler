@@ -547,7 +547,7 @@ def subspace_ex1_37_U: Submodule ℝ (Fin 3 → ℝ) where
   add_mem' := by aesop
   smul_mem' := by simp
 
-def subsdpace_ex1_37_V: Submodule ℝ (Fin 3 → ℝ) where
+def subspace_ex1_37_V: Submodule ℝ (Fin 3 → ℝ) where
   carrier := { ![0, x₂, 0] |  (x₂ : ℝ)}
   zero_mem' := by simp
   smul_mem' := by simp
@@ -556,4 +556,73 @@ def subsdpace_ex1_37_V: Submodule ℝ (Fin 3 → ℝ) where
 theorem ex1_37: { ![x₁, 0, 0] | (x₁: ℝ)} + { ![0, x₂, 0] |  (x₂ : ℝ)} = { ![x₁, x₂, 0] | (x₁: ℝ) (x₂: ℝ)} := by
   ext x ; simp [Set.mem_add]
 
-#check (subspace_ex1_37_U + subsdpace_ex1_37_V)
+def subspace_ex1_37_VU: Submodule ℝ (Fin 3 → ℝ) where
+  carrier :=  { ![x₁, x₂, 0] | (x₁: ℝ) (x₂: ℝ)}
+  zero_mem' := by simp
+  smul_mem' := by aesop
+  add_mem' := by aesop
+
+
+#check (subspace_ex1_37_U + subspace_ex1_37_V)
+
+/-
+#### Example 1.38
+
+`𝑈 = {(𝑥,𝑥,𝑦,𝑦) ∈ 𝐅^4 ∶𝑥,𝑦 ∈ 𝐅}` and `𝑊={(𝑥,𝑥,𝑥,𝑦) ∈ 𝐅^4 ∶𝑥,𝑦 ∈ 𝐅}`
+
+prove
+
+`𝑈 + 𝑊 = {(𝑥,𝑥,𝑦,𝑧) ∈ 𝐅^4 ∶𝑥,𝑦,𝑧 ∈ 𝐅}`
+-/
+
+def subspace_ex1_38_U: Submodule F (Fin 4 → F) where
+  carrier :=  { ![x, x, y, y] | (x: F) (y: F)}
+  zero_mem' := by simp
+  smul_mem' := by aesop
+  add_mem' := by aesop
+
+def subspace_ex1_38_W: Submodule F (Fin 4 → F) where
+  carrier :=  { ![x, x, x, y] | (x: F) (y: F)}
+  zero_mem' := by simp
+  smul_mem' := by aesop
+  add_mem' := by aesop
+
+theorem ex1_38: { ![x, x, y, y] | (x: F) (y: F)} + { ![x, x, x, y] | (x: F) (y: F)} = { ![x, x, y, z] | (x: F) (y: F) (z: F)} := by
+  ext x ; simp [Set.mem_add]; constructor
+  . intro h
+    rcases h with ⟨a, b, c, d, h⟩
+    use (a + c), (b + c), (b + d)
+  . intro h
+    rcases h with ⟨a, b, c, h⟩
+    use a, b, 0, (c - b)
+    simp_all
+
+/-
+
+Axler, Linear Algebra Done Right, Example 1.40:
+
+"Suppose `𝑉_1, ..., 𝑉_𝑚` are subspaces of `𝑉`. Then `𝑉_1 + ⋯ + 𝑉_𝑚` is the smallest subspace of `𝑉`
+containing `𝑉_1, ..., 𝑉_𝑚`."
+
+We know `V_1 + ... + V_m` is a subspace because the `Submodule.pointwiseAddCommMonoid` instance
+proves additive closure.
+
+If we can prove the claim of "smallest" for pairs of subspaces `U` and `V` we can prove for arbitrary
+additve chains.
+
+There's a subtlty here -- Mathlib's version of `+` for `Submodule` is actually `⊔` (`Sup`) under the hood, and
+and the actual proof relies on very general proof machinery about lattices (through `Submodule`'s inheritence
+from `AddSubmonoid` which has a `CompleteLattice` implementation).
+
+In practice, it would be rare to use `Pointwise` and the below theorem would be written
+`{V₁ V₂ W : Submodule F V} : (∀ x : V, x ∈ V₁ ∨ x ∈ V₂ → x ∈ W) → V₁ ⊔ V₁ ≤ W`
+
+credit to Patrick Massot for the proof
+-/
+open Pointwise
+
+variable {F V : Type*} [Field F] [AddCommGroup V] [Module F V]
+theorem ex_1_40 {V₁ V₂ W : Submodule F V} : (∀ x : V, x ∈ V₁ ∨ x ∈ V₂ → x ∈ W) → V₁ + V₁ ≤ W := by
+  intro h
+  simp only [Submodule.add_eq_sup]
+  refine' sup_le ?_ ?_ <;> intro x hx <;> aesop
