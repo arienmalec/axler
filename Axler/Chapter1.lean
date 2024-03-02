@@ -625,4 +625,4 @@ variable {F V : Type*} [Field F] [AddCommGroup V] [Module F V]
 theorem ex_1_40 {V₁ V₂ W : Submodule F V} : (∀ x : V, x ∈ V₁ ∨ x ∈ V₂ → x ∈ W) → V₁ + V₁ ≤ W := by
   intro h
   simp only [Submodule.add_eq_sup]
-  refine' sup_le ?_ ?_ <;> intro x hx <;> aesop
+  apply sup_le; intro _ _; aesop
