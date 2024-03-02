@@ -626,3 +626,78 @@ theorem ex_1_40 {V₁ V₂ W : Submodule F V} : (∀ x : V, x ∈ V₁ ∨ x ∈
   intro h
   simp only [Submodule.add_eq_sup]
   apply sup_le <;> intro _ _ <;> aesop
+
+/-
+### Direct Sums
+
+In Mathlib, the machinery for what Axler terms Direct Sums is more general than in
+Linear Algebra Done right.
+
+Mathlib uses the fact that the submodules of a module form a complete lattice to generalize the proofs
+around modules to proofs of lattice structures; in particular, Mathlib uses the ⊔ (least upper bound)
+operator, or lattice join, to represent sums of submodules. What Axler terms the Direct Sum is,
+in Mathlib, the statement that the least upper bound of submodules is ⊤ (AKA the submodule
+identical to the module) along with the assertion that the submodules are disjoint.
+
+These last two are packaged as `IsCompl` -- this definition is equivalent to the defintion in 1.46
+
+Note that there's a `DirectSum` in Mathlib with `⨁`, but it's simpler *not* to use the notation.
+
+-/
+
+/-
+#### Example 1.42
+
+Suppose `𝑈` is the subspace of `𝐅^3` of those vectors whose last coordinate equals `0`,
+and `𝑊` is the subspace of `𝐅^3` of those vectors whose first two coordinates equal `0`:
+`𝑈 = {(𝑥,𝑦,0) ∈ 𝐅^3 ∶ 𝑥,𝑦 ∈ 𝐅}` and `𝑊 = {(0,0,𝑧) ∈ 𝐅^3 ∶𝑧 ∈ 𝐅}`.
+Then `𝐅^3 = 𝑈 ⊕ 𝑊`, as you should verify.
+
+We construct the subspaces, prove their join is `⊤`, prove they are `Disjoint`, and
+package those into `IsCompl`
+
+-/
+
+variable (F: Type*) [Field F]
+
+def ex1_42_U: Submodule F (Fin 3 → F) where
+  carrier := { ![x, y, 0] | (x: F) (y: F) }
+  add_mem' := by aesop
+  smul_mem' := by aesop
+  zero_mem' := by simp
+
+def ex1_42_V: Submodule F (Fin 3 → F) where
+  carrier := { ![0, 0, z] | (z: F)}
+  add_mem' := by aesop
+  smul_mem' := by aesop
+  zero_mem' := by simp
+
+-- We need these in our join proof to extact the precise membership relationship
+theorem mem_ex1_42_V {x}: x ∈ ex1_42_V F ↔ x ∈ { ![0, 0, z] | (z: F)} := Iff.rfl
+theorem mem_ex1_42_U {x}: x ∈ ex1_42_U F ↔ x ∈ { ![x, y, 0] | (x: F) (y: F) } := Iff.rfl
+
+theorem ex1_42_join_eq_top: (ex1_42_U F ⊔ ex1_42_V F) = ⊤ := by
+  rw [Submodule.eq_top_iff']
+  intro x
+  rw [Submodule.mem_sup]
+  use ![x 0, x 1, 0]
+  constructor
+  . rw [mem_ex1_42_U]; aesop
+  . use ![0, 0, x 2]
+    constructor
+    . rw [mem_ex1_42_V]; aesop
+    . ext f; fin_cases f <;> aesop
+
+
+theorem ex1_42_Disjoint: Disjoint (ex1_42_U F) (ex1_42_V F) := by
+  rw [disjoint_iff, Submodule.eq_bot_iff]
+  intro x h
+  cases' h with h1 h2; rcases h1 with ⟨x₁, x₂, h1⟩ ; rcases h2 with ⟨x₃, h2⟩
+  ext f ; fin_cases f
+  . rw [←h2]; simp
+  . rw [←h2]; simp
+  . rw [←h1]; simp
+
+def ex1_42_isCompl: IsCompl (ex1_42_U F) (ex1_42_V F)  where
+  disjoint := ex1_42_Disjoint _
+  codisjoint := codisjoint_iff.mpr (ex1_42_join_eq_top F)
